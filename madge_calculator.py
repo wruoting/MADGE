@@ -41,4 +41,4 @@ def multi_variate_gaussian_area(xy, mean, sigma):
 # print(gaussian_area(1.96, 0, 1))
 
 
-print(multi_variate_gaussian_area([1, 1], [0, 0], [[1, 0], [0, 1]]))
+# print(multi_variate_gaussian_area([1, 1], [0, 0], [[1, 0], [0, 1]]))
