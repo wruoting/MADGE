@@ -2,11 +2,10 @@ from point import Point
 from madge_calculator import gaussian_area, euclidean
 import numpy as np
 
-class Set(object):
+class ClassificationSet(object):
     def __init__(self, mean=0, sigma=1):
         self.graph = {}
         self.vectorized_graph = []
-        self.two_dimensional_vectorized_graph = None
         self.mean = mean # We will most likely hold this at 0 since we're always starting from the point
         self.sigma = sigma
         
@@ -67,12 +66,11 @@ class Set(object):
             self.vectorized_graph = np.append(self.vectorized_graph, point)
 
             
-    def point_weight_vectorize(self, graph_point, point):
+    def point_weight_vectorize(self, self_graph_point, input_point):
         # We could probably optimize here with some array x array apply methods with numpy
-        distance = euclidean(point.tuple, graph_point.tuple)
+        distance = euclidean(input_point.tuple, self_graph_point.tuple)
         w_i = gaussian_area(distance, self.mean, self.sigma)
-        z_i = graph_point.type
-        #(np.multiply(w_i, z_i), w_i)
+        z_i = self_graph_point.type
         return np.multiply(w_i, z_i), w_i
             
     @staticmethod

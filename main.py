@@ -1,10 +1,10 @@
-from set import Set
+from classification_set import ClassificationSet
 from point import Point
 from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
 
-new_set = Set()
+new_set = ClassificationSet()
 
 new_set.add_point(Point(1,2,1))
 new_set.add_point(Point(1,3,1))
