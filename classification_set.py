@@ -20,7 +20,7 @@ class ClassificationSet(object):
         Gives the weight of a point given the current set of points
         :param x: x coordinate np array like
         :param y: y coordinate np array like
-        :return: weight as a float
+        :return: weight as a reshaped vector
         """
         # the input points to graph
         np_point_array = self.vectorized_points(x, y).reshape(len(x)*len(y)) 
@@ -46,7 +46,7 @@ class ClassificationSet(object):
             sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
             sum_wi = np.add(sum_wi, weight_xi)
         
-        madge_vector = np.divide(sum_zi_wi, sum_wi)            
+        madge_vector = np.nan_to_num(np.divide(sum_zi_wi, sum_wi))
         # need to reshape this madge vector
         return madge_vector.reshape(len(x),len(y))
                 
@@ -55,7 +55,6 @@ class ClassificationSet(object):
         """
         Adds another point to the set. The set will be an undirected graph with nC2 total edges
         :param point: a Point object
-        :param type: an int classifier
         :return: None
         """
         if self.graph.get(point):
@@ -67,6 +66,12 @@ class ClassificationSet(object):
 
             
     def point_weight_vectorize(self, self_graph_point, input_point):
+        """
+        Helper function for creating zi_wi for 2 points
+        :param self_graph_point: a Point object
+        :param input_point: a Point object
+        :return: (zi*wi, wi) tuple
+        """
         # We could probably optimize here with some array x array apply methods with numpy
         distance = euclidean(input_point.tuple, self_graph_point.tuple)
         w_i = gaussian_area(distance, self.mean, self.sigma)
@@ -75,6 +80,12 @@ class ClassificationSet(object):
             
     @staticmethod
     def vectorized_points(x, y):
+        """
+        Adds another point to the set. The set will be an undirected graph with nC2 total edges
+        :param x: int x
+        :param y: int y
+        :return: vectorized function
+        """
         def to_point(x_in, y_in):
             return Point(x_in,y_in)
         point_func = np.vectorize(to_point)
