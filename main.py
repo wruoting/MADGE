@@ -54,6 +54,6 @@ def add_points_and_graph(data_set, linspace):
     ax.legend()
     plt.show()
 
-data_set = [(1,2,1), (1,3,1), (0,0,0)]
+data_set = [(5,5,1), (1,1,1), (0,0,0), (-5,-5,1), (-3,-3,1)]
 linspace = (-6, 6, 30)
 add_points_and_graph(data_set, linspace)
