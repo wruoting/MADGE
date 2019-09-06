@@ -49,11 +49,17 @@ def add_points_and_graph(data_set, linspace):
     ax.plot_surface(X, Y, Z)
     ax.set_xlabel('x')
     ax.set_ylabel('y')
-    ax.set_zlabel('z');
+    ax.set_zlabel('z')
     ax.view_init(60, 35)
     ax.legend()
     plt.show()
 
-data_set = [(5,5,1), (1,1,1), (0,0,0), (-5,-5,1), (-3,-3,1)]
-linspace = (-6, 6, 30)
-add_points_and_graph(data_set, linspace)
+
+def main():
+    data_set = [(5,5,1), (1,1,1), (0,0,0), (-5,-5,1), (-3,-3,1)]
+    linspace = (-6, 6, 30)
+    add_points_and_graph(data_set, linspace)
+
+
+if __name__ == "__main__":
+    main()
