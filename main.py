@@ -4,7 +4,6 @@ from mpl_toolkits import mplot3d
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 def add_points_and_graph(data_set, linspace):
     """
     Gives the weight of a point given the current set of points
@@ -54,6 +53,16 @@ def add_points_and_graph(data_set, linspace):
     ax.legend()
     plt.show()
 
-data_set = [(5,5,1), (1,1,1), (0,0,0), (-5,-5,1), (-3,-3,1)]
+def add_points_to_data_set():
+    f= open("./SampleData/circle_classification.txt","r")
+    return np.array(f.readlines()[0])
+
+# data_set = [(5,5,1), (1,1,1), (0,0,0), (-5,-5,1), (-3,-3,1)]
+
 linspace = (-6, 6, 30)
-add_points_and_graph(data_set, linspace)
+training_data_set = add_points_to_data_set()
+add_points_and_graph(training_data_set, linspace)
+
+# add_points_and_graph(data_set, linspace)
+
+
