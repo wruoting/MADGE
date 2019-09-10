@@ -150,3 +150,6 @@ title = 'Regress Gaussian'
 create_and_plot_points_in_data_set(training_data_set, training_data_set_filename, (1, -1), title)
 plot_madge_data(data, filename, title)
 
+
+if __name__ == "__main__":
+    main()
