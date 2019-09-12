@@ -9,4 +9,4 @@ class Point(object):
     
     @property
     def tuple(self):
-        return (self.x, self.y)
+        return self.x, self.y

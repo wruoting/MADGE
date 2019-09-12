@@ -2,11 +2,8 @@ from classification_set import ClassificationSet
 from point import Point
 import numpy as np
 import plotly as py
-from plotly.offline import init_notebook_mode
-import plotly.graph_objs as go
 import plotly.graph_objects as go
 import ast
-import pandas as pd
 
 
 def create_data_graphs_and_classifiers(data_set, linspace, classifiers, surface_name='MADGE Surface'):
@@ -18,7 +15,7 @@ def create_data_graphs_and_classifiers(data_set, linspace, classifiers, surface_
     :param surface_name: the title of the graph for the surface
     :return: data in the form of an array with Surface and Scatter3D objects [Surface, Scatter3D, Scatter3D]
     """
-    new_set = ClassificationSet()
+    new_set = ClassificationSet(sigma=0.1)
     x_1 = []
     y_1 = []
     z_1 = []
@@ -42,13 +39,16 @@ def create_data_graphs_and_classifiers(data_set, linspace, classifiers, surface_
     y_space = np.linspace(linspace[0], linspace[1], linspace[2])
 
     X, Y = np.meshgrid(x_space, y_space)
-    Z = new_set.weight(X, Y)
+    Z = new_set.calculate_madge_data_and_map_to_plane(X, Y)
     trace_surface = go.Surface(x=X, y=Y, z=Z, name=surface_name)
-    trace_scatter_class_a = go.Scatter3d(x=x_1, y=y_1, z=z_1, mode='markers', name='Classifier {}'.format(classifiers[0]))
-    trace_scatter_class_b = go.Scatter3d(x=x_0, y=y_0, z=z_0, mode='markers', name='Classifier {}'.format(classifiers[1]))
+    trace_scatter_class_a = go.Scatter3d(x=x_1, y=y_1, z=z_1, mode='markers',
+                                         name='Classifier {}'.format(classifiers[0]))
+    trace_scatter_class_b = go.Scatter3d(x=x_0, y=y_0, z=z_0, mode='markers',
+                                         name='Classifier {}'.format(classifiers[1]))
     data = [trace_surface, trace_scatter_class_a, trace_scatter_class_b]
     return data
-    
+
+
 def create_and_plot_points_in_data_set(data_set, classifiers):
     """
     Creates and returns a data object for just the scatter plot with no third graph
@@ -71,20 +71,23 @@ def create_and_plot_points_in_data_set(data_set, classifiers):
         elif data_point[2] == classifiers[1]:
             x_0.append(data_point[0])
             y_0.append(data_point[1])
-            z_0.append(0)    
-                 
-    trace_scatter_class_a = go.Scatter3d(x=x_1, y=y_1, z=z_1, mode='markers', name='Classifier {}'.format(classifiers[0]))
-    trace_scatter_class_b = go.Scatter3d(x=x_0, y=y_0, z=z_0, mode='markers', name='Classifier {}'.format(classifiers[1]))
+            z_0.append(0)
+
+    trace_scatter_class_a = go.Scatter3d(x=x_1, y=y_1, z=z_1, mode='markers',
+                                         name='Classifier {}'.format(classifiers[0]))
+    trace_scatter_class_b = go.Scatter3d(x=x_0, y=y_0, z=z_0, mode='markers',
+                                         name='Classifier {}'.format(classifiers[1]))
     data = [trace_scatter_class_a, trace_scatter_class_b]
     return data
-    
+
+
 def read_data_from_file(path):
     """
     Read data from a file and returns it as a numpy array
     :param path: path of file relative to this file
     :return: numpy array
     """
-    f= open(path,"r")
+    f = open(path, "r")
     return np.array(ast.literal_eval(f.readlines()[0]))
 
 
@@ -108,11 +111,11 @@ def plot_madge_data(data, filename, title):
     """
     fig = go.Figure(data=data)
     fig.update_layout(title=title, autosize=True,
-                  width=700, height=700,
-                  margin=dict(l=65, r=50, b=65, t=90))
-    py.offline.plot(fig,filename=filename)
-    
-    
+                      width=700, height=700,
+                      margin=dict(l=65, r=50, b=65, t=90))
+    py.offline.plot(fig, filename=filename)
+
+
 def plot_scatter_data(data, filename, title):
     """
     Generates a plot of the madge data with only the scatter
@@ -123,4 +126,4 @@ def plot_scatter_data(data, filename, title):
     """
     fig = go.Figure(data=data)
     fig.update_layout(title=title)
-    py.offline.plot(fig,filename=filename)
+    py.offline.plot(fig, filename=filename)
