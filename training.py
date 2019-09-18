@@ -7,9 +7,14 @@ import numpy as np
 import plotly as py
 import plotly.graph_objects as go
 from scipy import interpolate
+import plotly.figure_factory as ff
 
-def classify_data(path, classifiers, linspace, validation_data_ratio=0.2, surface_name='MADGE Surface'):
 
+def classify_data(path, classifiers, linspace, validation_data_ratio=0.2, generate_graphs=True,
+                    surface_name='MADGE Surface', title='Classification Data', filename='Test.html'):
+    # Make the lower classifier always the first
+    if classifiers[0] > classifiers[1]:
+        classifiers = (classifiers[1], classifiers[0])
     # Create our training data params
     training_data_set = convert_array_to_array_of_tuples(read_data_from_file(path))
     ## If we want to see it normally
@@ -56,31 +61,85 @@ def classify_data(path, classifiers, linspace, validation_data_ratio=0.2, surfac
     # Ummm? https://stackoverflow.com/questions/37872171/how-can-i-perform-two-dimensional-interpolation-using-scipy
     # I have no idea what the fuck RBF is but let's just say for now that it works and dear god that's amazing
     f_training_interpolate = interpolate.Rbf(X, Y, Z, function='cubic', smooth=0)
-    Z_validate = f_training_interpolate(x_test, y_test)
+    Z_validate_interpolate = f_training_interpolate(x_test, y_test)
+    
+    # If the z value is above 0, it is classified as the greater of the two classifications, 
+    # if it is below 0, it is classified as the less of the two classifications
+    # These classifications are arbitrary
+    # We compare these to Y_validate for an accuracy
+    def compare_with_zero(value):
+        if value > 0:
+            return classifiers[1]
+        else:
+            return classifiers[0]
+    test_classification_results = list(map(compare_with_zero, Z_validate_interpolate))
+    
+    correct_results = 0
+    for result, test_result in zip(test_classification_results, Y_validate):
+        if result == test_result:
+            correct_results += 1
+    accuracy = np.divide(correct_results, len(test_classification_results))
+    if generate_graphs:
+        # Now we generate graphs 
+        trace_surface = go.Surface(x=X, y=Y, z=Z, name=surface_name, showscale=False)
+        trace_scatter_class_a_training = go.Scatter3d(x=x_0_train, y=y_0_train, z=z_0_train, mode='markers',
+                                             name='Training Classifier {}'.format(classifiers[0]), 
+                                             marker=dict(
+                                                 size=3,
+                                                 color='#f29938',    
+                                                 opacity=1
+                                             ), legendgroup="Group_Train")
+        trace_scatter_class_b_training = go.Scatter3d(x=x_1_train, y=y_1_train, z=z_1_train, mode='markers',
+                                             name='Training Classifier {}'.format(classifiers[1]),
+                                             marker=dict(
+                                                 size=3,
+                                                 color='#257ec0',    
+                                                 opacity=1
+                                             ), legendgroup="Group_Train")
+        # Add plots for testing data
+        trace_scatter_class_a_testing= go.Scatter3d(x=x_0_test, y=y_0_test, z=z_0_test, mode='markers',
+                                             name='Testing Classifier {}'.format(classifiers[0]),
+                                             marker=dict(
+                                                 size=3,
+                                                 color='#f29938',    
+                                                 opacity=0.4
+                                             ), legendgroup="Group_Test")
+                                        
+        trace_scatter_class_b_testing = go.Scatter3d(x=x_1_test, y=y_1_test, z=z_1_test, mode='markers',
+                                             name='Testing Classifier {}'.format(classifiers[1]),
+                                             marker=dict(
+                                                 size=3,
+                                                 color='#257ec0',    
+                                                 opacity=0.4
+                                             ), legendgroup="Group_Test")
+        
+        # Append the title name with accuracy
+        title = title + "\nAccuracy: {}".format(accuracy)
+        data = [trace_surface, 
+                trace_scatter_class_a_training, trace_scatter_class_b_training, 
+                trace_scatter_class_a_testing, trace_scatter_class_b_testing]
+        fig = go.Figure(data=data)
+        fig.update_layout(title=title, autosize=True,
+                          width=700, height=700,
+                          margin=dict(l=50, r=50, b=65, t=90))
+        py.offline.plot(fig, filename=filename)
+    else:
+        # If we're not generating graphs we will return the accuracy
+        return accuracy
+
+def test_scatter(X, Y, Z, x_test, y_test, Z_validate, surface_name='MADGE Interpolate Surface', filename='test.html'):
+    """
+    Generates a plot of the interpolated data overlayed with the general data
+    :param X: 
+    :return: None
+    """
     trace_surface = go.Surface(x=X, y=Y, z=Z, name=surface_name)
     test_scatter = go.Scatter3d(x=x_test, y=y_test, z=Z_validate, mode='markers',
-                                         name='Interpolated Values'.format(classifiers[0]))
+                                         name='Interpolated Values')
     data = [trace_surface, test_scatter]
     fig = go.Figure(data=data)
-    py.offline.plot(fig, filename='test.html')
-    
-    # Now we generate graphs 
-    # trace_surface = go.Surface(x=X, y=Y, z=Z, name=surface_name)
-    # trace_scatter_class_a_training = go.Scatter3d(x=x_0_train, y=y_0_train, z=z_0_train, mode='markers',
-    #                                      name='Training Classifier {}'.format(classifiers[0]))
-    # trace_scatter_class_b_training = go.Scatter3d(x=x_1_train, y=y_1_train, z=z_1_train, mode='markers',
-    #                                      name='Training Classifier {}'.format(classifiers[1]))
-    # # Add plots for testing data
-    # trace_scatter_class_a_testing= go.Scatter3d(x=x_0_test, y=y_0_test, z=z_0_test, mode='markers',
-    #                                      name='Testing Classifier {}'.format(classifiers[0]))
-    # trace_scatter_class_b_testing = go.Scatter3d(x=x_1_test, y=y_1_test, z=z_1_test, mode='markers',
-    #                                      name='Testing Classifier {}'.format(classifiers[1]))
-    # 
-    # data = [trace_surface, 
-    #         trace_scatter_class_a_training, trace_scatter_class_b_training, 
-    #         trace_scatter_class_a_testing, trace_scatter_class_b_testing]
+    py.offline.plot(fig, filename=filename)
 
-
-
-linspace = (-6, 6, 30)
-classify_data("./SampleData/ClassifySpiralData.txt", (-1, 1), linspace, validation_data_ratio=0.2)
+def graph_bar(data, filename):
+    fig = ff.create_distplot(data, ['Accuracy Frequency'])
+    py.offline.plot(fig, filename=filename)
