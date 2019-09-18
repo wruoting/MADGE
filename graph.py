@@ -47,8 +47,8 @@ def create_data_graphs_and_classifiers(data_set, linspace, classifiers, surface_
                                          name='Classifier {}'.format(classifiers[1]))
     data = [trace_surface, trace_scatter_class_a, trace_scatter_class_b]
     return data
-
-
+    
+    
 def create_and_plot_points_in_data_set(data_set, classifiers):
     """
     Creates and returns a data object for just the scatter plot with no third graph
@@ -79,8 +79,8 @@ def create_and_plot_points_in_data_set(data_set, classifiers):
                                          name='Classifier {}'.format(classifiers[1]))
     data = [trace_scatter_class_a, trace_scatter_class_b]
     return data
-
-
+    
+    
 def read_data_from_file(path):
     """
     Read data from a file and returns it as a numpy array
