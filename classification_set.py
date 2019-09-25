@@ -1,4 +1,4 @@
-from point import Point
+from TwoDimensionalClassification.point import Point
 from madge_calculator import gaussian_area, euclidean
 import numpy as np
 
