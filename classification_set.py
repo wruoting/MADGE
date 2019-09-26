@@ -70,6 +70,7 @@ class ClassificationSet(object):
         :return: (zi*wi, wi) tuple
         """
         # We could probably optimize here with some array x array apply methods with numpy
+        # TODO: we need a relative distance here, because otherwise we're gonna have massive distances between two points in space
         distance = euclidean(input_point.tuple, self_graph_point.tuple)
         w_i = gaussian_area(distance, self.mean, self.sigma)
         z_i = self_graph_point.type
