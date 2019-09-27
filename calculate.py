@@ -57,15 +57,27 @@ for image, label in zip(images_training, labels_training):
 # 3. Calculate the average sigma and use this ubiquitously
 # We can just do an l1 of the set
 train_label_sigma = LA.norm(np.subtract(train_label_sigma_max, train_label_sigma_min))
-mnist_training_set.sigma = np.divide(train_label_sigma, 30)# idk thirty sigma?
-print(train_label_sigma)
+mnist_training_set.sigma = np.divide(train_label_sigma, 50)# idk thirty sigma?
+print('Sigma value: {}'.format(train_label_sigma))
 
 match = 0
 total = len(images_testing)
+index_testing = 0
+print('Running Testing Data')
 for image, label in zip(images_testing, labels_testing):
     if label == round(mnist_training_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label))):
         match = match + 1
-print(np.divide(match, total))
+    index_testing = index_testing + 1
+    print('Processing {} out of {}'.format(index_testing, 100))
+    print("Test")
+    print(label)
+    print('Real')
+    print(mnist_training_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label)))
+    if index_testing == 100:
+        break
+
+with open('Accuracy.txt', "w+") as f:
+    f.write(str(np.divide(match, index_testing)))
 
 # import matplotlib.pyplot as plt
 # image = np.asarray(data[2]).squeeze()
