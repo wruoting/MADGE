@@ -1,6 +1,6 @@
 from classification_set_n import ClassificationSetN
 from n_point import NPoint
-import gzip
+from numpy import linalg as LA
 import numpy as np
 from mnist import MNIST
 import ast
@@ -43,22 +43,29 @@ train_label_dim = len(images_training[0])
 train_label_sigma_max = np.zeros(train_label_dim)
 train_label_sigma_min = np.zeros(train_label_dim)
 
+index_training = 0
 for image, label in zip(images_training, labels_training):
     mnist_training_set.add_point(NPoint(image, type=label))
     # 2. Each point needs to look for a max and a min for sigmas. Runtime unfortunately N^2
+    print('Processing {} out of {}'.format(index_training, len(images_training)))
+    index_training = index_training + 1
     for element, index in enumerate(image):
         if element > train_label_sigma_max[index]:
             train_label_sigma_max[index] = element
-        if element < train_label_sigma_min:
+        if element < train_label_sigma_min[index]:
             train_label_sigma_min[index] = element
+# 3. Calculate the average sigma and use this ubiquitously
+# We can just do an l1 of the set
+train_label_sigma = LA.norm(np.subtract(train_label_sigma_max, train_label_sigma_min))
+mnist_training_set.sigma = np.divide(train_label_sigma, 30)# idk thirty sigma?
+print(train_label_sigma)
 
-# 3. Calculate the average sigma and use this ubiquitously (a + b +c .... /n)
-
+match = 0
+total = len(images_testing)
 for image, label in zip(images_testing, labels_testing):
-    print('Real')
-    print(label)
-    print('Test')
-    print(mnist_training_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label)))
+    if label == round(mnist_training_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label))):
+        match = match + 1
+print(np.divide(match, total))
 
 # import matplotlib.pyplot as plt
 # image = np.asarray(data[2]).squeeze()
