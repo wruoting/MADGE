@@ -46,7 +46,7 @@ train_label_sigma_min = np.zeros(train_label_dim)
 index_training = 0
 for image, label in zip(images_training, labels_training):
     mnist_training_set.add_point(NPoint(image, type=label))
-    # 2. Each point needs to look for a max and a min for sigmas. Runtime unfortunately N^2
+    # 2. Each point needs to look for a max and a min for sigmas. Runtime unfortunately N*M
     print('Processing {} out of {}'.format(index_training, len(images_training)))
     index_training = index_training + 1
     for element, index in enumerate(image):
@@ -55,10 +55,14 @@ for image, label in zip(images_training, labels_training):
         if element < train_label_sigma_min[index]:
             train_label_sigma_min[index] = element
 # 3. Calculate the average sigma and use this ubiquitously
-# We can just do an l1 of the set
-train_label_sigma = LA.norm(np.subtract(train_label_sigma_max, train_label_sigma_min))
-mnist_training_set.sigma = np.divide(train_label_sigma, 50)# idk thirty sigma?
-print('Sigma value: {}'.format(train_label_sigma))
+# We are going to use the equation sum(n_i/sum(n) * range(w_i)/6),
+# where n_i is the ith dimension, sum(n) is the sum of the range of all dimensions
+# w is the range of the dimension at i
+range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
+sum_vector = np.sum(range_vector)  # sum(n)
+sigma_vector = np.zeros(len(images_testing))
+for image, index in enumerate(images_testing):
+
 
 match = 0
 total = len(images_testing)
