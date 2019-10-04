@@ -9,6 +9,10 @@ class ClassificationSet(object):
         self.vectorized_graph = []
         self.mean = mean  # We will most likely hold this at 0 since we're always starting from the point
         self.sigma = sigma
+        # We are going to use the equation sum(n_i/sum(n) * range(w_i)/6),
+        # where n_i is the ith dimension of the point we are classifying
+        self.range_vector = None  # each element is the w_i, sum(n) is calculated
+        self.normalization_standard_deviation_factor = 4  # the number of standard deviations we are normalizing by
 
     @property
     def show(self):

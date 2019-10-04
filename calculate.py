@@ -58,10 +58,7 @@ for image, label in zip(images_training, labels_training):
 # We are going to use the equation sum(n_i/sum(n) * range(w_i)/6),
 # where n_i is the ith dimension, sum(n) is the sum of the range of all dimensions
 # w is the range of the dimension at i
-range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
-sum_vector = np.sum(range_vector)  # sum(n)
-sigma_vector = np.zeros(len(images_testing))
-for image, index in enumerate(images_testing):
+mnist_training_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
 
 
 match = 0

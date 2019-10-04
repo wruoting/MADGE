@@ -13,6 +13,15 @@ class ClassificationSetN(ClassificationSet):
         :param point: n-dim point 
         :return: weight as a reshaped vector
         """
+        # Recalculate sigma with f(x)
+        for classification_point in self.vectorized_graph:
+            # each classification point will need to be distanced by dimension to this point, with an input of []
+            distance_between_points_vector = np.absolute(np.subtract(classification_point.tuple, point.tuple))
+            sum_distance_between_points = np.sum(distance_between_points_vector)
+            normalized_vector = np.divide(np.absolute(np.subtract(classification_point.tuple, point.tuple)), sum_distance_between_points)
+            # we multiply each vector by its corresponding range_vector
+            self.sigma = np.dot(normalized_vector, self.range_vector)
+
         sum_zi_wi = 0
         sum_wi = 0
         vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize)
