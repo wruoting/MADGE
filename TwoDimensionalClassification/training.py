@@ -126,6 +126,7 @@ def classify_data(path, classifiers, linspace, validation_data_ratio=0.2, genera
         # If we're not generating graphs we will return the accuracy
         return accuracy
 
+
 def test_scatter(X, Y, Z, x_test, y_test, Z_validate, surface_name='MADGE Interpolate Surface', filename='test.html'):
     """
     Generates a plot of the interpolated data overlayed with the general data
@@ -138,6 +139,7 @@ def test_scatter(X, Y, Z, x_test, y_test, Z_validate, surface_name='MADGE Interp
     data = [trace_surface, test_scatter]
     fig = go.Figure(data=data)
     py.offline.plot(fig, filename=filename)
+
 
 def graph_bar(data, filename):
     fig = ff.create_distplot(data, ['Accuracy Frequency'])

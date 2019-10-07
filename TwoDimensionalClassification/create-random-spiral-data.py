@@ -1,11 +1,12 @@
 from __future__ import print_function
 
 import plygdata as pg
+import numpy as np
 
 
 # Store data array in file
 def write_to_file(filename, data):
-    f = open("./SampleData/{}.txt".format(filename),"w+")
+    f = open("../SampleData/{}.txt".format(filename), "w+")
     f.write(str(data))
     f.close()
 
@@ -19,8 +20,13 @@ validation_data_ratio = 0
 
 ClassifySpiralData = pg.generate_data(pg.DatasetType.ClassifySpiralData, data_noise)
 
-data_array = ClassifySpiralData
-data_array_str = 'ClassifySpiralData'
-#
-# for element, element_str in zip(data_array, data_array_str):
-#     write_to_file(element_str, element)
+# Multiply each 0 coordinate by a large number, in this case 426,561
+# Multiply each 1 coordinate by a smaller number, in this case 15, 624
+new_classify_spiral_data = []
+for element in ClassifySpiralData:
+    new_classify_spiral_data.append(list(np.multiply(element, [15, 4, 1])))
+
+data_array = new_classify_spiral_data
+data_array_str = 'ClassifySpiralDataNonSquare'
+write_to_file(data_array_str, data_array)
+

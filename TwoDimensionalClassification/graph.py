@@ -1,4 +1,5 @@
 from classification_set import ClassificationSet
+from classification_set_n import ClassificationSetN
 from TwoDimensionalClassification.point import Point
 import numpy as np
 import plotly as py
@@ -47,7 +48,71 @@ def create_data_graphs_and_classifiers(data_set, linspace, classifiers, surface_
                                          name='Classifier {}'.format(classifiers[1]))
     data = [trace_surface, trace_scatter_class_a, trace_scatter_class_b]
     return data
-    
+
+
+def create_data_graphs_and_classifiers_by_point(data_set, linspace, classifiers, surface_name='MADGE Surface'):
+    """
+    Compiles and converts data set into an array tht can be graphed
+    :param data_set: set of tuples [(a,b, classification), (), ()] in an array
+    :param linspace: linspace as a vector (-x, x, total_space)
+    :param classifiers: classifiers as a tuple to indicate what the classification is eg. (0, 1) is for two way classification
+    :param surface_name: the title of the graph for the surface
+    :return: data in the form of an array with Surface and Scatter3D objects [Surface, Scatter3D, Scatter3D]
+    """
+    new_set = ClassificationSetN(sigma=0.1)
+    x_1 = []
+    y_1 = []
+    z_1 = []
+    x_0 = []
+    y_0 = []
+    z_0 = []
+    train_label_dim = 2
+    train_label_sigma_max = np.zeros(train_label_dim)
+    train_label_sigma_min = np.zeros(train_label_dim)
+    for data_point in data_set:
+        new_set.add_point(Point(data_point[0], data_point[1], data_point[2]))
+        if data_point[2] == classifiers[0]:
+            x_1.append(data_point[0])
+            y_1.append(data_point[1])
+            z_1.append(0)
+        elif data_point[2] == classifiers[1]:
+            x_0.append(data_point[0])
+            y_0.append(data_point[1])
+            z_0.append(0)
+        if data_point[0] > train_label_sigma_max[0]:
+            train_label_sigma_max[0] = data_point[0]
+        if data_point[1] < train_label_sigma_min[1]:
+            train_label_sigma_min[1] = data_point[1]
+    # 3. Calculate the average sigma and use this ubiquitously
+    # We are going to use the equation sum(n_i/sum(n) * range(w_i)/6),
+    # where n_i is the ith dimension, sum(n) is the sum of the range of all dimensions
+    # w is the range of the dimension at i
+    new_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
+    new_set.normalization_standard_deviation_factor = 6
+    # https://jakevdp.github.io/PythonDataScienceHandbook/04.12-three-dimensional-plotting.html
+    x_space = np.linspace(linspace[0], linspace[1], linspace[2])
+    y_space = np.linspace(linspace[0], linspace[1], linspace[2])
+
+    X, Y = np.meshgrid(x_space, y_space)
+    Z = []
+    for x_array, y_array in zip(X, Y):
+        z_point = []
+        for x_point, y_point in zip(x_array, y_array):
+            predicted_point = new_set.calculate_madge_data_and_map_to_point(Point(x_point, y_point))
+            if np.absolute(classifiers[0] - predicted_point) > np.absolute(classifiers[1] - predicted_point):
+                z_point.append(classifiers[1])
+            else:
+                z_point.append(classifiers[0])
+        Z.append(z_point)
+    Z = np.array(Z)
+    trace_surface = go.Surface(x=X, y=Y, z=Z, name=surface_name)
+    trace_scatter_class_a = go.Scatter3d(x=x_1, y=y_1, z=z_1, mode='markers',
+                                         name='Classifier {}'.format(classifiers[0]))
+    trace_scatter_class_b = go.Scatter3d(x=x_0, y=y_0, z=z_0, mode='markers',
+                                         name='Classifier {}'.format(classifiers[1]))
+    data = [trace_surface, trace_scatter_class_a, trace_scatter_class_b]
+    return data
+
     
 def create_and_plot_points_in_data_set(data_set, classifiers):
     """
