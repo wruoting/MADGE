@@ -11,7 +11,7 @@ class ClassificationSet(object):
         self.sigma = sigma
         # We are going to use the equation sum(n_i/sum(n) * range(w_i)/6),
         # where n_i is the ith dimension of the point we are classifying
-        self.range_vector = None  # each element is the w_i, sum(n) is calculated
+        self.range_vector = None  # each element is the w_i, sum(n) is calculated. The range vector should be the dim of the set.
         self.normalization_standard_deviation_factor = 4  # the number of standard deviations we are normalizing by
 
     @property

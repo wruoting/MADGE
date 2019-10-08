@@ -89,6 +89,7 @@ def create_data_graphs_and_classifiers_by_point(data_set, linspace, classifiers,
     # w is the range of the dimension at i
     new_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
     new_set.normalization_standard_deviation_factor = 6
+    new_set.range_vector = np.divide(new_set.range_vector, new_set.normalization_standard_deviation_factor)
     # https://jakevdp.github.io/PythonDataScienceHandbook/04.12-three-dimensional-plotting.html
     x_space = np.linspace(linspace[0], linspace[1], linspace[2])
     y_space = np.linspace(linspace[0], linspace[1], linspace[2])
@@ -98,7 +99,7 @@ def create_data_graphs_and_classifiers_by_point(data_set, linspace, classifiers,
     for x_array, y_array in zip(X, Y):
         z_point = []
         for x_point, y_point in zip(x_array, y_array):
-            predicted_point = new_set.calculate_madge_data_and_map_to_point(Point(x_point, y_point))
+            predicted_point = new_set.calculate_madge_data_and_map_to_point(Point(x_point, y_point), normalize=True)
             if np.absolute(classifiers[0] - predicted_point) > np.absolute(classifiers[1] - predicted_point):
                 z_point.append(classifiers[1])
             else:
