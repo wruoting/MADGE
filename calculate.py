@@ -59,7 +59,7 @@ for image, label in zip(images_training, labels_training):
 # where n_i is the ith dimension, sum(n) is the sum of the range of all dimensions
 # w is the range of the dimension at i
 mnist_training_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
-
+mnist_training_set.range_vector = np.divide(mnist_training_set.range_vector, mnist_training_set.normalization_standard_deviation_factor)
 
 match = 0
 total = len(images_testing)

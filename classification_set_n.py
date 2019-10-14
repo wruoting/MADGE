@@ -39,6 +39,8 @@ class ClassificationSetN(ClassificationSet):
                 weight_wi_zi, weight_xi = vectorized_point_weight_function(data_point, point)
                 sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
                 sum_wi = np.add(sum_wi, weight_xi)
+
         if math.isnan(np.divide(sum_zi_wi, sum_wi)):
+            # this NAN default isn't necessarily good for classification without a default
             return 0
-        return np.divide(sum_zi_wi, sum_wi)
+        return np.round(np.divide(sum_zi_wi, sum_wi))

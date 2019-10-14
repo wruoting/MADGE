@@ -53,7 +53,7 @@ def create_data_graphs_and_classifiers(data_set, linspace, classifiers, surface_
 def create_data_graphs_and_classifiers_by_point(data_set, linspace, classifiers, surface_name='MADGE Surface'):
     """
     Compiles and converts data set into an array tht can be graphed
-    :param data_set: set of tuples [(a,b, classification), (), ()] in an array
+    :param data_set: set of tuples [(a,b, classification), (), ()] in an arrayclassify_data
     :param linspace: linspace as a vector (-x, x, total_space)
     :param classifiers: classifiers as a tuple to indicate what the classification is eg. (0, 1) is for two way classification
     :param surface_name: the title of the graph for the surface
