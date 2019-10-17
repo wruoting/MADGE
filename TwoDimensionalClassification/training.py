@@ -11,7 +11,7 @@ import plotly.figure_factory as ff
 
 
 def classify_data(path, classifiers, linspace, validation_data_ratio=0.2, generate_graphs=True,
-                    surface_name='MADGE Surface', title='Classification Data', filename='Test.html'):
+                  surface_name='MADGE Surface', title='Classification Data', filename='Test.html'):
     # Make the lower classifier always the first
     if classifiers[0] > classifiers[1]:
         classifiers = (classifiers[1], classifiers[0])
@@ -129,7 +129,8 @@ def classify_data(path, classifiers, linspace, validation_data_ratio=0.2, genera
 
 
 def classify_data_by_point(path, classifiers, linspace, validation_data_ratio=0.2, generate_graphs=True,
-                    surface_name='MADGE Surface', title='Classification Data', filename='Test.html', normalization_standard_deviation_factor=6):
+                           surface_name='MADGE Surface', title='Classification Data', filename='Test.html',
+                           normalization_standard_deviation_factor=6):
     # Make the lower classifier always the first
     if classifiers[0] > classifiers[1]:
         classifiers = (classifiers[1], classifiers[0])
@@ -179,7 +180,7 @@ def classify_data_by_point(path, classifiers, linspace, validation_data_ratio=0.
             Z.append(z_point)
         Z = np.array(Z)
 
-    ## This creates the testing data graph data
+    # This creates the testing data graph data
     x_0_test, y_0_test, z_0_test, x_1_test, y_1_test, z_1_test, x_test, y_test, z_test = \
         [], [], [], [], [], [], [], [], []
     for [test_x, test_y], classification in zip(X_validate, Y_validate):
@@ -247,6 +248,7 @@ def classify_data_by_point(path, classifiers, linspace, validation_data_ratio=0.
     else:
         # If we're not generating graphs we will return the accuracy
         return accuracy
+
 
 def test_scatter(X, Y, Z, x_test, y_test, Z_validate, surface_name='MADGE Interpolate Surface', filename='test.html'):
     """
