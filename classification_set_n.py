@@ -2,11 +2,15 @@ from classification_set import ClassificationSet
 import numpy as np
 import math
 
+from madge_calculator import gaussian_area
+
 
 class ClassificationSetN(ClassificationSet):
 
     def __init__(self, mean=0, sigma=1):
         super().__init__(mean=mean, sigma=sigma)
+        self.normalized_range_vector = None
+        self.normalized_gaussian_vector = None
 
     def calculate_madge_data_and_map_to_point(self, point, normalize=True):
         """
@@ -26,7 +30,12 @@ class ClassificationSetN(ClassificationSet):
                 distance_between_points_vector = np.absolute(np.subtract(classification_point.tuple, point.tuple))
                 sum_distance_between_points = np.sum(distance_between_points_vector)
                 normalized_vector = np.divide(np.absolute(np.subtract(classification_point.tuple, point.tuple)), sum_distance_between_points)
-                self.sigma = np.dot(normalized_vector, self.range_vector)
+                # Do a gaussian on the range with the normalization factor as the division of the range
+                self.normalized_range_vector = np.divide(self.range_vector, self.normalization_standard_deviation_factor)
+                # Now we normalize this range vector with our input point as our mean
+                gauss_vectorize = np.vectorize(gaussian_area)
+                self.normalized_gaussian_vector = gauss_vectorize(classification_point.tuple, point.tuple, self.normalized_range_vector)
+                self.sigma = np.dot(normalized_vector, self.normalized_gaussian_vector)
                 # From this point on, we are calculating per point, it just so happens that if we are not normalizing,
                 # we will use just one sigma
                 vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize)

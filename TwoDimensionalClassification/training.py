@@ -259,7 +259,7 @@ def classify_data_by_point_set_validate(path, classifiers, split_data, normaliza
     training_data_set = convert_array_to_array_of_tuples(read_data_from_file(path))
     ## If we want to see it normally
     # Divide the data for training and validating at a specified ratio (further, separate each data into Coordinate point data part and teacher label part)
-    X_train, Y_train, X_validate, Y_validate = split_data(0), split_data(1), split_data(2), split_data(3)
+    X_train, Y_train, X_validate, Y_validate = split_data[0], split_data[1], split_data[2], split_data[3]
 
     # # This creates the plane with the data we are working with
     new_set = ClassificationSetN()
@@ -283,7 +283,6 @@ def classify_data_by_point_set_validate(path, classifiers, split_data, normaliza
             train_label_sigma_min[1] = train_y
     new_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
     new_set.normalization_standard_deviation_factor = normalization_standard_deviation_factor
-    new_set.range_vector = np.divide(new_set.range_vector, new_set.normalization_standard_deviation_factor)
 
     # This creates the testing data graph data
     x_0_test, y_0_test, z_0_test, x_1_test, y_1_test, z_1_test, x_test, y_test, z_test = \
