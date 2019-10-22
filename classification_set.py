@@ -79,7 +79,35 @@ class ClassificationSet(object):
         w_i = gaussian_area(distance, self.mean, self.sigma)
         z_i = self_graph_point.type
         return np.multiply(w_i, z_i), w_i
+    
+    def point_weight_vectorize_range_weighted(self, self_graph_point, input_point):
+        """
+        Helper function for creating zi_wi for 2 points. This method uses the range vector of our equation
+        to map weighted points instead
+        :param self_graph_point: a Point object
+        :param input_point: a Point object
+        :return: (zi*wi, wi) tuple
+        """
 
+        # We individually calculate weights here with the inner range first
+        inner_range = np.absolute(np.subtract(input_point.tuple, self_graph_point.tuple))
+        inner_range_sum = np.sum(inner_range)
+        inner_range_vector = np.divide(inner_range, inner_range_sum)
+        # Calculate the effect of range on sigma
+        sigma_range_vector = np.divide(self.range_vector, self.sigma)
+        # Create a vectorized gaussian using the outer range
+        gaussian_vectorized = np.vectorize(gaussian_area)
+        if self.range_vector is None:
+            raise Exception("You need a range vector to do this calculation")
+        inner_gaussian = gaussian_vectorized(self_graph_point.tuple, input_point.tuple, sigma_range_vector)        
+        weighted_gaussian_range = np.dot(inner_range_vector, inner_gaussian)        
+
+        # print("self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian")
+        # print(self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian)
+        z_i = self_graph_point.type
+        return np.multiply(weighted_gaussian_range, z_i)
+
+    
     @staticmethod
     def vectorized_points(x, y):
         """
