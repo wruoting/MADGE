@@ -2,6 +2,7 @@ from TwoDimensionalClassification.graph import read_data_from_file, convert_arra
 from TwoDimensionalClassification.point import Point
 from classification_set import ClassificationSet
 from classification_set_n import ClassificationSetN
+from madge_calculator import classify_by_distance
 import plygdata as pg
 import numpy as np
 import plotly as py
@@ -347,7 +348,10 @@ def classify_data_by_point_set_validate_v2(path, classifiers, split_data, sigma=
     for [test_x, test_y], classification in zip(X_validate, Y_validate):
         x_test.append(test_x)
         y_test.append(test_y)
-        z_test.append(np.round(new_set.calculate_madge_data_and_map_to_point_v2(Point(test_x, test_y), sigma=sigma)))
+        classification_result = classify_by_distance(
+                classifiers,
+                new_set.calculate_madge_data_and_map_to_point_v2(Point(test_x, test_y), sigma=sigma))
+        z_test.append(classification_result)
         if classification == classifiers[0]:
             x_0_test.append(test_x)
             y_0_test.append(test_y)

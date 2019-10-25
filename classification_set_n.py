@@ -51,7 +51,6 @@ class ClassificationSetN(ClassificationSet):
             return 0
         return np.round(np.divide(sum_zi_wi, sum_wi))
 
-
     def calculate_madge_data_and_map_to_point_v2(self, point, sigma):
         """
         Gives the weight of a point given the current set of points
@@ -60,10 +59,9 @@ class ClassificationSetN(ClassificationSet):
         :return: weight as a reshaped vector
         """
         sum_zi_wi = 0
-        sum_wi = 0
         for classification_point in self.vectorized_graph:
             self.sigma = sigma
             vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize_range_weighted)
             weight_wi_zi = vectorized_point_weight_function(classification_point, point)
             sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
-        return np.round(sum_zi_wi)
+        return sum_zi_wi

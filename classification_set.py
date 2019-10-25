@@ -1,7 +1,7 @@
 from TwoDimensionalClassification.point import Point
 from madge_calculator import gaussian_area, euclidean
 import numpy as np
-
+from numpy.linalg import norm
 
 class ClassificationSet(object):
     def __init__(self, mean=0, sigma=1):
@@ -100,14 +100,15 @@ class ClassificationSet(object):
         if self.range_vector is None:
             raise Exception("You need a range vector to do this calculation")
         inner_gaussian = gaussian_vectorized(self_graph_point.tuple, input_point.tuple, sigma_range_vector)        
-        weighted_gaussian_range = np.dot(inner_range_vector, inner_gaussian)        
+        weighted_gaussian = np.dot(inner_range_vector, inner_gaussian)
+        # L2 norm this vector
+        # weighted_gaussian_norm = norm(weighted_gaussian_vector)
 
-        # print("self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian")
-        # print(self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian)
+        # print("self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian, weighted_gaussian_norm")
+        # print(self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian, weighted_gaussian_norm)
         z_i = self_graph_point.type
-        return np.multiply(weighted_gaussian_range, z_i)
+        return np.multiply(weighted_gaussian, z_i)
 
-    
     @staticmethod
     def vectorized_points(x, y):
         """
