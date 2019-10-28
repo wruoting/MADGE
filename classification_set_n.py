@@ -32,15 +32,18 @@ class ClassificationSetN(ClassificationSet):
                 normalized_vector = np.divide(np.absolute(np.subtract(classification_point.tuple, point.tuple)), sum_distance_between_points)
                 # Do a gaussian on the range with the normalization factor as the division of the range
                 self.normalized_range_vector = np.divide(self.range_vector, self.normalization_standard_deviation_factor)
-                self.sigma = np.dot(normalized_vector, self.normalized_range_vector)
+                # Now we normalize this range vector with our input point as our mean
+                gauss_vectorize = np.vectorize(gaussian_area)
+                self.normalized_gaussian_vector = gauss_vectorize(classification_point.tuple, point.tuple, self.normalized_range_vector)
+                self.sigma = np.dot(normalized_vector, self.normalized_gaussian_vector)
                 # From this point on, we are calculating per point, it just so happens that if we are not normalizing,
                 # we will use just one sigma
-                vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize_range_weighted)
+                vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize)
                 weight_wi_zi, weight_xi = vectorized_point_weight_function(classification_point, point)
                 sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
                 sum_wi = np.add(sum_wi, weight_xi)
         else:
-            vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize_range_weighted)
+            vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize)
             for data_point in self.vectorized_graph:
                 weight_wi_zi, weight_xi = vectorized_point_weight_function(data_point, point)
                 sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
