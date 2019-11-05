@@ -145,8 +145,33 @@ def create_and_plot_points_in_data_set(data_set, classifiers):
                                          name='Classifier {}'.format(classifiers[1]))
     data = [trace_scatter_class_a, trace_scatter_class_b]
     return data
-    
-    
+
+
+def read_sigma_accuracy(path):
+    X, Y, Z = [], [], []
+    with open(path, 'r') as file:
+        f_lines = file.readlines()
+        for x in f_lines:
+           X.append(float(x.strip().split(',')[0]))
+           Y.append(float(x.strip().split(',')[1]))
+           Z.append(float(x.strip().split(',')[2]))
+    trace_surface = go.Mesh3d(x=X, y=Y, z=Z,
+                              name='X-to-Sigma-Ratio and Y-to-Sigma-Ratio to Accuracy',
+                              opacity=0.5)
+    fig = go.Figure(data=trace_surface)
+
+    fig.update_layout(title='X-to-Sigma-Ratio and Y-to-Sigma-Ratio to Accuracy',
+                      autosize=True,
+                      scene=dict(
+                          xaxis_title='Sigma to X',
+                          yaxis_title='Sigma to Y',
+                          zaxis_title='Accuracy'),
+                      width=700, height=700,
+                      showlegend=True,
+                      margin=dict(l=50, r=50, b=65, t=90))
+    py.offline.plot(fig, filename='11-03-2019-X-to-Sigma-Ratio and Y-to-Sigma-Ratio to Accuracy-0-3-sigma.html')
+
+
 def read_data_from_file(path):
     """
     Read data from a file and returns it as a numpy array

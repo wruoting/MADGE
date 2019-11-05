@@ -341,7 +341,8 @@ def classify_data_by_point_set_validate_v2(path, classifiers, split_data, sigma=
         if train_y < train_label_sigma_min[1]:
             train_label_sigma_min[1] = train_y
     new_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
-    
+    # print('Sigma range vector: {}'.format(np.divide(new_set.range_vector, sigma)))
+    print('Range vector: {}'.format(new_set.range_vector))
     # This creates the testing data graph data
     x_0_test, y_0_test, z_0_test, x_1_test, y_1_test, z_1_test, x_test, y_test, z_test = \
         [], [], [], [], [], [], [], [], []
@@ -366,6 +367,125 @@ def classify_data_by_point_set_validate_v2(path, classifiers, split_data, sigma=
         if result == test_result:
             correct_results += 1
     accuracy = np.divide(correct_results, len(z_test))
+    return accuracy
+
+
+def classify_data_by_point_set_validate_v3(path, classifiers, split_data, sigma, path_to_write):
+    # Make the lower classifier always the first
+    if classifiers[0] > classifiers[1]:
+        classifiers = (classifiers[1], classifiers[0])
+
+    # Divide the data for training and validating at a specified ratio (further, separate each data into Coordinate point data part and teacher label part)
+    X_train, Y_train, X_validate, Y_validate = split_data[0], split_data[1], split_data[2], split_data[3]
+
+    # # This creates the plane with the data we are working with
+    new_set = ClassificationSetN()
+    x_0_train, y_0_train, z_0_train, x_1_train, y_1_train, z_1_train = [], [], [], [], [], []
+    train_label_dim = 2
+    train_label_sigma_max = np.zeros(train_label_dim)
+    train_label_sigma_min = np.zeros(train_label_dim)
+    for [train_x, train_y], classification in zip(X_train, Y_train):
+        new_set.add_point(Point(train_x, train_y, classification))
+        if classification == classifiers[0]:
+            x_0_train.append(train_x)
+            y_0_train.append(train_y)
+            z_0_train.append(0)
+        elif classification == classifiers[1]:
+            x_1_train.append(train_x)
+            y_1_train.append(train_y)
+            z_1_train.append(0)
+        if train_x > train_label_sigma_max[0]:
+            train_label_sigma_max[0] = train_x
+        if train_y < train_label_sigma_min[1]:
+            train_label_sigma_min[1] = train_y
+    new_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
+    # This creates the testing data graph data
+    x_0_test, y_0_test, z_0_test, x_1_test, y_1_test, z_1_test, x_test, y_test, z_test = \
+        [], [], [], [], [], [], [], [], []
+    for [test_x, test_y], classification in zip(X_validate, Y_validate):
+        x_test.append(test_x)
+        y_test.append(test_y)
+        classification_result = classify_by_distance(
+                classifiers,
+                new_set.calculate_madge_data_and_map_to_point_v3(Point(test_x, test_y), sigma=sigma))
+        z_test.append(classification_result)
+        if classification == classifiers[0]:
+            x_0_test.append(test_x)
+            y_0_test.append(test_y)
+            z_0_test.append(0)
+        elif classification == classifiers[1]:
+            x_1_test.append(test_x)
+            y_1_test.append(test_y)
+            z_1_test.append(0)
+
+    correct_results = 0
+    for result, test_result in zip(z_test, Y_validate):
+        if result == test_result:
+            correct_results += 1
+    accuracy = np.divide(correct_results, len(z_test))
+    with open(path_to_write, 'a+') as file:
+        file.write('{},{},{}\n'.format(sigma[0], sigma[1], accuracy))
+    return accuracy
+
+
+# This function uses the gaussian weights
+def classify_data_by_point_set_validate_v4(classifiers, split_data, sigma, path_to_write):
+    # Make the lower classifier always the first
+    if classifiers[0] > classifiers[1]:
+        classifiers = (classifiers[1], classifiers[0])
+    # Divide the data for training and validating at a specified ratio (further, separate each data into Coordinate point data part and teacher label part)
+    X_train, Y_train, X_validate, Y_validate = split_data[0], split_data[1], split_data[2], split_data[3]
+
+    # # This creates the plane with the data we are working with
+    new_set = ClassificationSetN()
+    x_0_train, y_0_train, z_0_train, x_1_train, y_1_train, z_1_train = [], [], [], [], [], []
+    train_label_dim = 2
+    train_label_sigma_max = np.zeros(train_label_dim)
+    train_label_sigma_min = np.zeros(train_label_dim)
+    for [train_x, train_y], classification in zip(X_train, Y_train):
+        new_set.add_point(Point(train_x, train_y, classification))
+        if classification == classifiers[0]:
+            x_0_train.append(train_x)
+            y_0_train.append(train_y)
+            z_0_train.append(0)
+        elif classification == classifiers[1]:
+            x_1_train.append(train_x)
+            y_1_train.append(train_y)
+            z_1_train.append(0)
+        if train_x > train_label_sigma_max[0]:
+            train_label_sigma_max[0] = train_x
+        if train_y < train_label_sigma_min[1]:
+            train_label_sigma_min[1] = train_y
+    new_set.range_vector = np.subtract(train_label_sigma_max, train_label_sigma_min)  # range(w)
+    # This creates the testing data graph data
+    x_0_test, y_0_test, z_0_test, x_1_test, y_1_test, z_1_test, x_test, y_test, z_test = \
+        [], [], [], [], [], [], [], [], []
+    for [test_x, test_y], classification in zip(X_validate, Y_validate):
+        x_test.append(test_x)
+        y_test.append(test_y)
+        classification_result = classify_by_distance(
+                classifiers,
+                new_set.calculate_madge_data_and_map_to_point_v4(Point(test_x, test_y), sigma=sigma))
+        print('classification_result', classification_result)
+        print('classification', classification)
+        print('--------------')
+        z_test.append(classification_result)
+        if classification == classifiers[0]:
+            x_0_test.append(test_x)
+            y_0_test.append(test_y)
+            z_0_test.append(0)
+        elif classification == classifiers[1]:
+            x_1_test.append(test_x)
+            y_1_test.append(test_y)
+            z_1_test.append(0)
+
+    correct_results = 0
+    for result, test_result in zip(z_test, Y_validate):
+        if result == test_result:
+            correct_results += 1
+    accuracy = np.divide(correct_results, len(z_test))
+    # with open(path_to_write, 'a+') as file:
+    #     file.write('{},{},{}\n'.format(sigma[0], sigma[1], accuracy))
     return accuracy
 
 

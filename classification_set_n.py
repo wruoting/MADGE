@@ -68,3 +68,36 @@ class ClassificationSetN(ClassificationSet):
             weight_wi_zi = vectorized_point_weight_function(classification_point, point)
             sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
         return sum_zi_wi
+
+    def calculate_madge_data_and_map_to_point_v3(self, point, sigma):
+        """
+        Gives the weight of a point given the current set of points
+        :param point: n-dim point
+        :param normalize: sigma calculation
+        :return: weight as a reshaped vector
+        """
+        sum_zi_wi = 0
+        for classification_point in self.vectorized_graph:
+            self.sigma_factor_vector = sigma
+            vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize_range_sigma_weighted)
+            weight_wi_zi = vectorized_point_weight_function(classification_point, point)
+            sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
+        return sum_zi_wi
+
+    def calculate_madge_data_and_map_to_point_v4(self, point, sigma):
+        """
+        Gives the weight of a point given the current set of points
+        :param point: n-dim point
+        :param normalize: sigma calculation
+        :return: weight as a reshaped vector
+        """
+        #
+        sum_zi_wi = 0
+        for classification_point in self.vectorized_graph:
+            self.sigma = sigma
+            # vectorized_point_weight_function = np.vectorize(self.point_weight_vectorize_gaussian_weighted)
+            weight_wi_zi = self.point_weight_vectorize_gaussian_weighted(classification_point, point)
+            sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
+        print('sum_zi_wi', sum_zi_wi)
+        return sum_zi_wi
+
