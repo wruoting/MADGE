@@ -1,9 +1,7 @@
-from classification_set_n import ClassificationSetN
-from n_point import NPoint
-from numpy import linalg as LA
+from TwoDimensionalClassification.classification_set_n import ClassificationSetN
+from TwoDimensionalClassification.n_point import NPoint
 import numpy as np
 from mnist import MNIST
-import ast
 
 a = NPoint((1, 2, 3), type=1)
 b = NPoint((1, 2, 4), type=0)
@@ -15,8 +13,8 @@ c = ClassificationSetN()
 # print(c.calculate_madge_data_and_map_to_point(d))
 
 
-# path = './SampleData/MNIST/train-images-idx3-ubyte.gz'
-samples_path = './SampleData/MNIST'
+# path = './SampleData/MNISTModule/train-images-idx3-ubyte.gz'
+samples_path = './SampleData/MNISTModule'
 # f = gzip.open(path, 'r')
 #
 # image_size = 28

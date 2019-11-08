@@ -53,7 +53,7 @@ def classify_by_distance(classifiers, weight):
         for index, value in enumerate(sorted_classifiers[1:]):
             # We know it's in between this index and the lower index
             if weight <= value:
-                classify_index = index
+                classify_index = index + 1
     if classify_index is not None:
         classifier = sorted_classifiers[classify_index] \
             if weight - sorted_classifiers[classify_index-1] > sorted_classifiers[classify_index] - weight \

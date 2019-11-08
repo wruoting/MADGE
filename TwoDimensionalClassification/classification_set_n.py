@@ -1,8 +1,8 @@
-from classification_set import ClassificationSet
+from TwoDimensionalClassification.classification_set import ClassificationSet
 import numpy as np
 import math
 
-from madge_calculator import gaussian_area
+from TwoDimensionalClassification.madge_calculator import gaussian_area
 
 
 class ClassificationSetN(ClassificationSet):
@@ -100,4 +100,25 @@ class ClassificationSetN(ClassificationSet):
             sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
         print('sum_zi_wi', sum_zi_wi)
         return sum_zi_wi
+
+    def calculate_madge_data_and_map_to_point_v5(self, point, sigma):
+        """
+        Gives the weight of a point given the current set of points. This will just use eucliean distance with a sigma of 1
+        :param point: n-dim point
+        :param normalize: sigma calculation
+        :return: weight as a reshaped vector
+        """
+        #
+
+        sum_zi_wi = 0
+        sum_wi = 0
+        self.sigma = sigma
+        for classification_point in self.vectorized_graph:
+            weight_wi_zi, weight_xi = self.point_weight_vectorize(classification_point, point)
+            sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
+            sum_wi = np.add(sum_wi, weight_xi)
+        if math.isnan(np.divide(sum_zi_wi, sum_wi)):
+            # this NAN default isn't necessarily good for classification without a default
+            return 0
+        return np.divide(sum_zi_wi, sum_wi)
 

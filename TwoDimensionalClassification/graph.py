@@ -1,5 +1,5 @@
-from classification_set import ClassificationSet
-from classification_set_n import ClassificationSetN
+from TwoDimensionalClassification.classification_set import ClassificationSet
+from TwoDimensionalClassification.classification_set_n import ClassificationSetN
 from TwoDimensionalClassification.point import Point
 import numpy as np
 import plotly as py

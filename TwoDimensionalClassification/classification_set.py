@@ -1,7 +1,7 @@
 from TwoDimensionalClassification.point import Point
-from madge_calculator import gaussian_area, euclidean
+from TwoDimensionalClassification.madge_calculator import gaussian_area, euclidean
 import numpy as np
-from numpy.linalg import norm
+
 
 class ClassificationSet(object):
     def __init__(self, mean=0, sigma=1):
@@ -80,7 +80,7 @@ class ClassificationSet(object):
         w_i = gaussian_area(distance, self.mean, self.sigma)
         z_i = self_graph_point.type
         return np.multiply(w_i, z_i), w_i
-    
+
     def point_weight_vectorize_range_weighted(self, self_graph_point, input_point):
         """
         Helper function for creating zi_wi for 2 points. This method uses the range vector of our equation
@@ -105,8 +105,6 @@ class ClassificationSet(object):
         # L2 norm this vector
         # weighted_gaussian_norm = norm(weighted_gaussian_vector)
 
-        # print("self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian, weighted_gaussian_norm")
-        # print(self_graph_point.tuple, input_point.tuple, sigma_range_vector, inner_range_vector, inner_gaussian, weighted_gaussian_norm)
         z_i = self_graph_point.type
         return np.multiply(weighted_gaussian, z_i)
 
@@ -148,11 +146,6 @@ class ClassificationSet(object):
         # Calculate the effect of range on sigma
         sigma_range_vector = np.divide(self.range_vector, self.sigma)
         inner_gaussian = gaussian_vectorized(self_graph_point.tuple, input_point.tuple, sigma_range_vector)
-        print('distance', euclidean(self_graph_point.tuple, input_point.tuple))
-        print('inner_gaussian', inner_gaussian)
-        print('norm', np.linalg.norm(inner_gaussian))
-        print('classification', self_graph_point.type)
-        print('----------')
         return np.multiply(np.linalg.norm(inner_gaussian), self_graph_point.type)
 
     @staticmethod
