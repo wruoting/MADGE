@@ -2,7 +2,7 @@ from scipy.spatial import distance
 from scipy import special as sp
 from scipy.stats import multivariate_normal
 import autograd.numpy as agnp
-
+import ast
 
 def euclidean(a, b):
     """
@@ -36,6 +36,12 @@ def multi_variate_gaussian_area(xy, mean, sigma):
     return multivariate_normal_fx.pdf(xy)
 
 
+def replace_with_one(a):
+    if a == 0:
+        return 1
+    return a
+
+
 def classify_by_distance(classifiers, weight):
     """
     :param classifiers: list of classifiers, array like
@@ -43,21 +49,48 @@ def classify_by_distance(classifiers, weight):
     :return: the closest classifier to the weight
     """
     sorted_classifiers = agnp.sort(classifiers, axis=None)
-    classifier = None
-    classify_index = None
-    if weight <= sorted_classifiers[0]:
-        classifier = sorted_classifiers[0]
-    elif weight >= sorted_classifiers[-1]:
-        classifier = sorted_classifiers[-1]
-    if classifier is None:
-        for index, value in enumerate(sorted_classifiers[1:]):
-            # We know it's in between this index and the lower index
-            if weight <= value:
-                classify_index = index + 1
-    if classify_index is not None:
-        classifier = sorted_classifiers[classify_index] \
-            if weight - sorted_classifiers[classify_index-1] > sorted_classifiers[classify_index] - weight \
-            else sorted_classifiers[classify_index-1]
-    return classifier
+    final_classifier = None
+    if weight <= classifiers[0]:
+        return classifiers[0]
+    if weight >= classifiers[-1]:
+        return classifiers[-1]
+    for index, classifier in enumerate(classifiers[0:-1]):
+        final_classifier = distance_between_two(classifier, classifiers[index+1], weight)
+        if final_classifier is not None:
+            return final_classifier
+    return None
+
+def distance_between_two(bot, top, weight):
+    if weight < bot or weight > top:
+        return None
+    if weight == bot:
+        return bot
+    if weight == top:
+        return top
+    if weight - bot > top - weight:
+        return top
+    if top - weight > weight - bot:
+        return bot
+    else:
+        print('Cant make accurate prediction')
+        return None
+    
+
+def read_data_from_file(path):
+    """
+    Read data from a file and returns it as a numpy array
+    :param path: path of file relative to this file
+    :return: numpy array
+    """
+    f = open(path, "r")
+    return agnp.array(ast.literal_eval(f.readlines()[0]))
 
 
+def convert_array_to_array_of_tuples(input_array):
+    """
+    Converts each array of an array into tuples
+    :param input_array: path of file relative to this file
+    :return: array of tuples
+    """
+    to_tuple = lambda v: tuple(v)
+    return [to_tuple(ai) for ai in input_array]
