@@ -41,8 +41,6 @@ class ClassificationSet(object):
         # TODO: we need a relative distance here, because otherwise we're gonna have massive distances between two points in space
         distance = euclidean(input_point.tuple, self_graph_point.tuple)
         w_i = gaussian_area(distance, self.mean, self.sigma)
-        # print('distance', distance)
-        # print('weight', w_i)
         z_i = self_graph_point.type
         return np.multiply(w_i, z_i), w_i
 
@@ -62,7 +60,7 @@ class ClassificationSet(object):
             weight_wi_zi, weight_xi = self.point_weight_vectorize(classification_point, point)
             sum_zi_wi = np.add(sum_zi_wi, weight_wi_zi)
             sum_wi = np.add(sum_wi, weight_xi)
-        if math.isnan(np.divide(sum_zi_wi, sum_wi)):
+        if sum_wi == 0 or math.isnan(np.divide(sum_zi_wi, sum_wi)):
             # this NAN default isn't necessarily good for classification without a default
             return 0
         return np.divide(sum_zi_wi, sum_wi)

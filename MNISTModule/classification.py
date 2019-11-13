@@ -9,25 +9,33 @@ class Classification(object):
                  training_data,
                  training_labels,
                  testing_data,
-                 testing_labels):
+                 testing_labels,
+                 sigma=0.02):
 
         self.classification_set = ClassificationSet()
         self.training_data = training_data
         self.training_labels = training_labels
         self.testing_data = testing_data
         self.testing_labels = testing_labels
-
-    def calculate_accuracy(self):
+        self.normalized_training_data = []
+        self.normalized_training_labels = training_labels
+        self.normalized_testing_data = []
+        self.normalized_testing_labels = []
+        self.range_vector = None
+        self.sigma = sigma
+        
+    def calculate_accuracy(self, mode='test'):
         # 1. Each point needs to look for a max and a min for sigmas. Runtime unfortunately N*M
         print('Processing images')
         # Figure out what the range is, and then shrink to normalize them
 
         replace_with_one_vector = np.vectorize(replace_with_one)
-        range_vector = replace_with_one_vector(np.subtract(
+        self.range_vector = replace_with_one_vector(np.subtract(
             np.amax(self.training_data, 0), np.amin(self.training_data, 0)))
-        images_training_normalize = np.divide(self.training_data, range_vector)
-        images_testing_normalize = np.divide(self.testing_data, range_vector)
-
+        images_training_normalize = np.divide(self.training_data, self.range_vector)
+        images_testing_normalize = np.divide(self.testing_data, self.range_vector)
+        self.normalized_training_data = images_training_normalize
+        self.normalized_testing_data = images_testing_normalize
         # We are going to calculate a sigma here that is proportional to the average of the range of the points
         # This calculation will allow us to reflect gaussian area with a relative rather than absolute distance using
         # any arbitrary sigma.
@@ -43,24 +51,35 @@ class Classification(object):
 
         match = 0
         index_testing = 0
-        sigma = 0.02
         # sigma = 0.9
         print('Running Testing Data')
         for image, label in zip(images_testing_normalize, self.testing_labels):
             classification = classify_by_distance(
                     np.unique(self.training_labels),
-                    self.classification_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label), sigma))
+                    self.classification_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label), self.sigma))
+            self.normalized_testing_labels.append(classification)
             if label == classification:
                 match = match + 1
             index_testing = index_testing + 1
-            print('Processing {} out of {}'.format(index_testing, 100))
-            print("Test")
-            print(label)
-            print('Real')
-            print(classification)
-            print('---------------')
-            if index_testing == 100:
-                break
+            if mode == 'test':
+                print('Processing {} out of {}'.format(index_testing, 100))
+                print("Test")
+                print(label)
+                print('Real')
+                print(classification)
+                print('---------------')
+                if index_testing == 100:
+                    break
 
         with open('Accuracy.txt', "w+") as f:
             f.write(str(np.divide(match, index_testing)))
+
+    def map_to_point(self, point, normalized=True):
+        if not normalized:
+            normalized_point = np.divide(point, self.range_vector)
+        else:
+            normalized_point = point
+        return classify_by_distance(
+            np.unique(self.training_labels),
+            self.classification_set.calculate_madge_data_and_map_to_point(NPoint(normalized_point), self.sigma))
+

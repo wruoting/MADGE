@@ -1,5 +1,6 @@
 from MNISTModule.classification_set import ClassificationSet
 from MNISTModule.classification import Classification
+from MNISTModule.graph import Graph
 from MNISTModule.madge_calculator import read_data_from_file
 import plygdata as pg
 
@@ -33,7 +34,7 @@ from mnist.loader import MNIST
 
 ## Gauss Data
 validation_data_ratio = 0.2
-path = "./SampleData/ClassifyXORDataNonSquare.txt"
+path = "./SampleData/SpiralStretch/ClassifySpiralDataNonSquare-1-20.txt"
 training_data_set = read_data_from_file(path)
 # This is the split data we will be using to generate all our graphs
 X_train, Y_train, X_validate, Y_validate = pg.split_data(training_data_set, validation_size=validation_data_ratio)
@@ -41,4 +42,16 @@ X_train, Y_train, X_validate, Y_validate = pg.split_data(training_data_set, vali
 
 classification = Classification(X_train, Y_train, X_validate, Y_validate)
 
-classification.calculate_accuracy()
+classification.calculate_accuracy(mode='prod')
+graph = Graph(classification)
+graph.plot_madge_data(graph.data((-1, 1), normalized=False),
+                      filename='11-11-19-Classification.html',
+                      title='Classification',
+                      normalized=False)
+graph_normalized = Graph(classification)
+graph_normalized.training_data = classification.normalized_training_data
+graph_normalized.testing_data = classification.normalized_testing_data
+graph_normalized.plot_madge_data(graph_normalized.data((-1, 1)),
+                                 filename='11-11-19-Normalized-Classification.html',
+                                 title='Normalized-Classification')
+

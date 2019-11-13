@@ -49,16 +49,16 @@ def classify_by_distance(classifiers, weight):
     :return: the closest classifier to the weight
     """
     sorted_classifiers = agnp.sort(classifiers, axis=None)
-    final_classifier = None
-    if weight <= classifiers[0]:
-        return classifiers[0]
-    if weight >= classifiers[-1]:
-        return classifiers[-1]
-    for index, classifier in enumerate(classifiers[0:-1]):
-        final_classifier = distance_between_two(classifier, classifiers[index+1], weight)
+    if weight <= sorted_classifiers[0]:
+        return sorted_classifiers[0]
+    if weight >= sorted_classifiers[-1]:
+        return sorted_classifiers[-1]
+    for index, classifier in enumerate(sorted_classifiers[0:-1]):
+        final_classifier = distance_between_two(classifier, sorted_classifiers[index+1], weight)
         if final_classifier is not None:
             return final_classifier
     return None
+
 
 def distance_between_two(bot, top, weight):
     if weight < bot or weight > top:
