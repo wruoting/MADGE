@@ -64,5 +64,5 @@ X_train, Y_train, X_validate, Y_validate, classification_mapping = create_iris_d
 # classification.save_model()
 
 classification_load = Classification(testing_data=X_validate, testing_labels=Y_validate, sigma=0.1)
-classification_load.load_model()
+classification_load.load_model(path='./SampleData/IrisData/')
 classification_load.calculate_accuracy(mode='prod', calculate=False)

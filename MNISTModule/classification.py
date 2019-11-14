@@ -76,23 +76,23 @@ class Classification(object):
             f.write("Sigma: {}\n".format(self.sigma))
             f.write(str(np.divide(match, index_testing)))
 
-    def save_model(self):
-        np.savetxt('Model.data', self.normalized_training_data, fmt='%s')
-        np.savetxt('Model.labels', self.training_labels, fmt='%s')
-        np.savetxt('Model.range', self.range_vector, fmt='%s')
+    def save_model(self, path='./'):
+        np.savetxt('{}Model.data'.format(path), self.normalized_training_data, fmt='%s')
+        np.savetxt('{}Model.labels'.format(path), self.training_labels, fmt='%s')
+        np.savetxt('{}Model.range'.format(path), self.range_vector, fmt='%s')
 
-    def load_model(self):
-        with open('Model.data') as f:
+    def load_model(self, path='./'):
+        with open('{}Model.data'.format(path)) as f:
             self.normalized_training_data = []
             for entry in f.readlines():
                 arr_entry = np.array(entry.strip('\n').split(' '))
                 self.normalized_training_data.append(arr_entry.astype(float))
-        with open('Model.labels') as f:
+        with open('{}Model.labels'.format(path)) as f:
             self.training_labels = []
             for entry in f.readlines():
                 strip_entry = int(entry.strip('\n'))
                 self.training_labels.append(strip_entry)
-        with open('Model.range') as f:
+        with open('{}Model.range'.format(path)) as f:
             self.range_vector = []
             for entry in f.readlines():
                 strip_entry = float(entry.strip('\n'))
