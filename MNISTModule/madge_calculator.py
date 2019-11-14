@@ -4,6 +4,7 @@ from scipy.stats import multivariate_normal
 import autograd.numpy as agnp
 import ast
 
+
 def euclidean(a, b):
     """
     :param a: point a array_like
@@ -74,7 +75,7 @@ def distance_between_two(bot, top, weight):
     else:
         print('Cant make accurate prediction')
         return None
-    
+
 
 def read_data_from_file(path):
     """

@@ -56,5 +56,13 @@ from mnist.loader import MNIST
 #                                  title='Normalized-Classification')
 
 
-## Iris Classification
-X_train, Y_train, X_validate, Y_validate = create_iris_data(validation_data_ratio=0.2)
+# Iris Classification
+X_train, Y_train, X_validate, Y_validate, classification_mapping = create_iris_data(validation_data_ratio=0.2)
+# classification = Classification(X_train, Y_train, X_validate, Y_validate, sigma=0.1)
+#
+# classification.calculate_accuracy(mode='prod')
+# classification.save_model()
+
+classification_load = Classification(testing_data=X_validate, testing_labels=Y_validate, sigma=0.1)
+classification_load.load_model()
+classification_load.calculate_accuracy(mode='prod', calculate=False)
