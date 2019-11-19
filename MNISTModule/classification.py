@@ -52,26 +52,28 @@ class Classification(object):
 
         match = 0
         index_testing = 0
-        # sigma = 0.9
         print('Running Testing Data')
         for image, label in zip(self.normalized_testing_data, self.testing_labels):
+            pre_classification = self.classification_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label), self.sigma)
             classification = classify_by_distance(
                     np.unique(self.training_labels),
-                    self.classification_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label), self.sigma))
+                    pre_classification)
             self.normalized_testing_labels.append(classification)
             if label == classification:
                 match = match + 1
             index_testing = index_testing + 1
             if mode == 'verbose':
-                print('Processing {} out of {}'.format(index_testing, 100))
+                print('Processing {} out of {}'.format(index_testing, len(self.testing_labels)))
                 print("Test")
                 print(label)
+                print('Pre-Classification')
+                print(pre_classification)
                 print('Real')
                 print(classification)
                 print('---------------')
-                if index_testing == 100:
-                    break
-
+                # if index_testing == 100:
+                #     break
+        print(str(np.divide(match, index_testing)))
         with open('Accuracy.txt', "w+") as f:
             f.write("Sigma: {}\n".format(self.sigma))
             f.write(str(np.divide(match, index_testing)))
@@ -90,7 +92,7 @@ class Classification(object):
         with open('{}Model.labels'.format(path)) as f:
             self.training_labels = []
             for entry in f.readlines():
-                strip_entry = int(entry.strip('\n'))
+                strip_entry = float(entry.strip('\n'))
                 self.training_labels.append(strip_entry)
         with open('{}Model.range'.format(path)) as f:
             self.range_vector = []

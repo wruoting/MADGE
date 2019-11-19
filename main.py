@@ -4,8 +4,10 @@ from MNISTModule.graph import Graph
 from MNISTModule.madge_calculator import read_data_from_file
 import plygdata as pg
 from IrisModule.sanitize_iris_data import create_iris_data
+from AbaloneModule.sanitize_abalone_data import create_abalone_data
 from mnist.loader import MNIST
-
+import numpy as np
+# 
 # samples_path = './SampleData/MNIST'
 # 
 # mndata = MNIST(samples_path)
@@ -14,9 +16,10 @@ from mnist.loader import MNIST
 # 
 # mnist_training_set = ClassificationSet()
 # 
-# classification = Classification(images_training, labels_training, images_testing, labels_testing)
+# classification = Classification(images_training, labels_training, images_testing, labels_testing, sigma=1)
 # 
-# classification.calculate_accuracy()
+# classification.calculate_accuracy(mode='verbose')
+# classification.save_model()
 
 # x_dim = "1"
 # y_dim = "10000"
@@ -25,14 +28,14 @@ from mnist.loader import MNIST
 # training_data_set = read_data_from_file(path)
 # # This is the split data we will be using to generate all our graphs
 # X_train, Y_train, X_validate, Y_validate = pg.split_data(training_data_set, validation_size=validation_data_ratio)
-# 
-# 
+#
+#
 # classification = Classification(X_train, Y_train, X_validate, Y_validate)
 # 
 # classification.calculate_accuracy()
 
 
-# Gauss Data
+### Gauss Data
 # validation_data_ratio = 0.2
 # path = "./SampleData/SpiralStretch/ClassifySpiralDataNonSquare-1-20.txt"
 # training_data_set = read_data_from_file(path)
@@ -56,13 +59,24 @@ from mnist.loader import MNIST
 #                                  title='Normalized-Classification')
 
 
-# Iris Classification
-X_train, Y_train, X_validate, Y_validate, classification_mapping = create_iris_data(validation_data_ratio=0.2)
-# classification = Classification(X_train, Y_train, X_validate, Y_validate, sigma=0.1)
-#
+### Iris Classification
+# X_train, Y_train, X_validate, Y_validate, classification_mapping = create_iris_data(validation_data_ratio=0.2)
+# classification = Classification(X_train, Y_train, X_validate, Y_validate, sigma=0.25)
+# #
 # classification.calculate_accuracy(mode='prod')
 # classification.save_model()
 
-classification_load = Classification(testing_data=X_validate, testing_labels=Y_validate, sigma=0.1)
-classification_load.load_model(path='./SampleData/IrisData/')
-classification_load.calculate_accuracy(mode='prod', calculate=False)
+# classification_load = Classification(testing_data=X_validate, testing_labels=Y_validate, sigma=0.1)
+# classification_load.load_model(path='./SampleData/IrisData/')
+# classification_load.calculate_accuracy(mode='prod', calculate=False)
+
+# Abalone Classification
+X_train, Y_train, X_validate, Y_validate = create_abalone_data(validation_data_ratio=0.2)
+# classification = Classification(X_train, Y_train, X_validate, Y_validate, sigma=1)
+# classification.calculate_accuracy(mode='prod')
+# classification.save_model()
+
+for sigma in np.arange(0.0001, 0.01, 0.0003):
+    classification_load = Classification(testing_data=X_validate, testing_labels=Y_validate, sigma=sigma)
+    classification_load.load_model(path='./SampleData/AbaloneData/')
+    classification_load.calculate_accuracy(mode='test', calculate=False)
