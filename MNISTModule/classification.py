@@ -23,7 +23,7 @@ class Classification(object):
         self.range_vector = None
         self.sigma = sigma
         
-    def calculate_accuracy(self, calculate=True, mode='test'):
+    def calculate_accuracy(self, calculate=True, preclassify=False, mode='test'):
         # 1. Each point needs to look for a max and a min for sigmas. Runtime unfortunately N*M
         print('Processing images')
         # Figure out what the range is, and then shrink to normalize them
@@ -52,9 +52,13 @@ class Classification(object):
 
         match = 0
         index_testing = 0
+        if preclassify:
+            no_rounding_set = []
         print('Running Testing Data')
         for image, label in zip(self.normalized_testing_data, self.testing_labels):
             pre_classification = self.classification_set.calculate_madge_data_and_map_to_point(NPoint(image, type=label), self.sigma)
+            if preclassify:
+                no_rounding_set.append(pre_classification)
             classification = classify_by_distance(
                     np.unique(self.training_labels),
                     pre_classification)
@@ -62,8 +66,8 @@ class Classification(object):
             if label == classification:
                 match = match + 1
             index_testing = index_testing + 1
+            print('Processing {} out of {}'.format(index_testing, len(self.testing_labels)))
             if mode == 'verbose':
-                print('Processing {} out of {}'.format(index_testing, len(self.testing_labels)))
                 print("Test")
                 print(label)
                 print('Pre-Classification')
@@ -71,12 +75,18 @@ class Classification(object):
                 print('Real')
                 print(classification)
                 print('---------------')
-                # if index_testing == 100:
-                #     break
-        print(str(np.divide(match, index_testing)))
-        with open('Accuracy.txt', "w+") as f:
-            f.write("Sigma: {}\n".format(self.sigma))
-            f.write(str(np.divide(match, index_testing)))
+                if index_testing == 10:
+                    break
+        if mode == 'return':
+            return str(np.divide(match, index_testing))
+        if not preclassify:
+            print(str(np.divide(match, index_testing)))
+            with open('Accuracy.txt', "w+") as f:
+                f.write("Sigma: {}\n".format(self.sigma))
+                f.write(str(np.divide(match, index_testing)))
+        else:
+            return no_rounding_set
+
 
     def save_model(self, path='./'):
         np.savetxt('{}Model.data'.format(path), self.normalized_training_data, fmt='%s')
