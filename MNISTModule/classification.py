@@ -22,8 +22,21 @@ class Classification(object):
         self.normalized_testing_labels = []
         self.range_vector = None
         self.sigma = sigma
-        
+
+    def create_model(self):
+        replace_with_one_vector = np.vectorize(replace_with_one)
+        self.range_vector = replace_with_one_vector(np.subtract(
+            np.amax(self.training_data, 0), np.amin(self.training_data, 0)))
+        images_training_normalize = np.divide(self.training_data, self.range_vector)
+        self.normalized_training_data = images_training_normalize
+
     def calculate_accuracy(self, calculate=True, preclassify=False, mode='test'):
+        """
+        :param calculate: If true, we will be calculating the training data, if false we will just be using preloaded data
+        :param preclassify: If true, we will not round the result of the classification, if false, we will round to the nearest classification
+        :param mode: verbose generates verbose message with outputs
+        :return:
+        """
         # 1. Each point needs to look for a max and a min for sigmas. Runtime unfortunately N*M
         print('Processing images')
         # Figure out what the range is, and then shrink to normalize them
@@ -86,7 +99,6 @@ class Classification(object):
                 f.write(str(np.divide(match, index_testing)))
         else:
             return no_rounding_set
-
 
     def save_model(self, path='./'):
         np.savetxt('{}Model.data'.format(path), self.normalized_training_data, fmt='%s')

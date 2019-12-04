@@ -7,19 +7,20 @@ from IrisModule.sanitize_iris_data import create_iris_data
 from AbaloneModule.sanitize_abalone_data import create_abalone_data
 from mnist.loader import MNIST
 import numpy as np
-# 
-# samples_path = './SampleData/MNIST'
-# 
-# mndata = MNIST(samples_path)
-# images_training, labels_training = mndata.load_training()
-# images_testing, labels_testing = mndata.load_testing()
-# 
-# mnist_training_set = ClassificationSet()
-# 
-# classification = Classification(images_training, labels_training, images_testing, labels_testing, sigma=1)
-# 
-# classification.calculate_accuracy(mode='verbose')
-# classification.save_model()
+
+samples_path = './SampleData/MNIST'
+
+mndata = MNIST(samples_path)
+images_training, labels_training = mndata.load_training()
+images_testing, labels_testing = mndata.load_testing()
+
+mnist_training_set = ClassificationSet()
+
+classification = Classification(images_training, labels_training, images_testing, labels_testing, sigma=1)
+classification.load_model(path='./MNISTModule/')
+print(classification.calculate_accuracy(calculate=False, mode='return'))
+# classification.create_model()
+# classification.save_model(path='./MNISTModule/')
 
 # x_dim = "1"
 # y_dim = "10000"
@@ -31,9 +32,8 @@ import numpy as np
 #
 #
 # classification = Classification(X_train, Y_train, X_validate, Y_validate)
-# 
+#
 # classification.calculate_accuracy()
-
 
 ### Gauss Data
 # validation_data_ratio = 0.2
@@ -70,13 +70,13 @@ import numpy as np
 # classification_load.load_model(path='./SampleData/IrisData/')
 # classification_load.calculate_accuracy(mode='prod', calculate=False)
 
-# Abalone Classification
-X_train, Y_train, X_validate, Y_validate = create_abalone_data(validation_data_ratio=0.2)
+#### Abalone Classification
+# X_train, Y_train, X_validate, Y_validate = create_abalone_data(validation_data_ratio=0.2)
 # classification = Classification(X_train, Y_train, X_validate, Y_validate, sigma=1)
 # classification.calculate_accuracy(mode='prod')
 # classification.save_model()
-
-for sigma in np.arange(0.0001, 0.01, 0.0003):
-    classification_load = Classification(testing_data=X_validate, testing_labels=Y_validate, sigma=sigma)
-    classification_load.load_model(path='./SampleData/AbaloneData/')
-    classification_load.calculate_accuracy(mode='test', calculate=False)
+#
+# for sigma in np.arange(0.0001, 0.01, 0.0003):
+#     classification_load = Classification(testing_data=X_validate, testing_labels=Y_validate, sigma=sigma)
+#     classification_load.load_model(path='./SampleData/AbaloneData/')
+#     classification_load.calculate_accuracy(mode='test', calculate=False)

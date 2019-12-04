@@ -53,8 +53,6 @@ def load_data_sets_cross_fold(data_path, label_path, cross_fold=5):
         red_image = image[0]
         green_image = image[1]
         blue_image = image[2]
-        for index in red_image[0:-cross_fold_vector]:
-            [index:index+cross_fold_vector]
 
 red_training, green_training, blue_training, label_train = load_data_sets(DATA_PATH_TRAIN, LABEL_PATH_TRAIN)
 
