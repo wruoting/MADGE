@@ -88,8 +88,8 @@ class Classification(object):
                 print('Real')
                 print(classification)
                 print('---------------')
-                if index_testing == 10:
-                    break
+            if index_testing == 2000:
+                break
         if mode == 'return':
             return str(np.divide(match, index_testing))
         if not preclassify:
@@ -104,7 +104,8 @@ class Classification(object):
         np.savetxt('{}Model.data'.format(path), self.normalized_training_data, fmt='%s')
         np.savetxt('{}Model.labels'.format(path), self.training_labels, fmt='%s')
         np.savetxt('{}Model.range'.format(path), self.range_vector, fmt='%s')
-
+        
+    # This function can be improved I wonder if we read from disk or a database instead of loading all the data into memory?
     def load_model(self, path='./'):
         with open('{}Model.data'.format(path)) as f:
             self.normalized_training_data = []

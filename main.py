@@ -17,10 +17,10 @@ images_testing, labels_testing = mndata.load_testing()
 mnist_training_set = ClassificationSet()
 
 classification = Classification(images_training, labels_training, images_testing, labels_testing, sigma=1)
-classification.load_model(path='./MNISTModule/')
-print(classification.calculate_accuracy(calculate=False, mode='return'))
-# classification.create_model()
-# classification.save_model(path='./MNISTModule/')
+# classification.load_model(path='./MNISTModule/')
+# print(classification.calculate_accuracy(calculate=False, mode='return'))
+classification.create_model()
+classification.save_model(path='./MNISTModule/')
 
 # x_dim = "1"
 # y_dim = "10000"
