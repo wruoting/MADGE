@@ -15,11 +15,12 @@ if os.path.exists(write_path):
     mode = 'a+'
 else:
     f= open(write_path,"w+")
-for test_sigma in np.arange(0.82, 0.87, 0.001):
+test_sigma = 0.85
+for i in range(0, 30):
     images_training, labels_training = mndata.load_training()
     images_testing, labels_testing = mndata.load_testing()
     classification = Classification(images_training, labels_training, images_testing, labels_testing, sigma=test_sigma)
-    classification.load_model(path='./MNISTModule/')
+    classification.create_model()
     with open(write_path, 'a+') as file:
         file.write(str(test_sigma) + ',' + classification.calculate_accuracy(calculate=False, mode='return'))
         file.write('\n')

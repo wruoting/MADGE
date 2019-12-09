@@ -95,4 +95,4 @@ class Graph(Classification):
             title=title,
             autosize=True,
             margin=dict(l=100, r=50, b=65, t=90))
-        py.offline.plot(fig, filename=filename)
+        py.offline.plot(fig, filename=filename)    

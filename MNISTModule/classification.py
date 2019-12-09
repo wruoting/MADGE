@@ -88,7 +88,7 @@ class Classification(object):
                 print('Real')
                 print(classification)
                 print('---------------')
-            if index_testing == 2000:
+            if index_testing == 1000:
                 break
         if mode == 'return':
             return str(np.divide(match, index_testing))
