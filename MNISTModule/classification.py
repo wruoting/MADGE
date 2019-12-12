@@ -44,6 +44,7 @@ class Classification(object):
             replace_with_one_vector = np.vectorize(replace_with_one)
             self.range_vector = replace_with_one_vector(np.subtract(
                 np.amax(self.training_data, 0), np.amin(self.training_data, 0)))
+            self.range_vector = self.range_vector
             images_training_normalize = np.divide(self.training_data, self.range_vector)
             images_testing_normalize = np.divide(self.testing_data, self.range_vector)
             self.normalized_training_data = images_training_normalize
@@ -79,17 +80,17 @@ class Classification(object):
             if label == classification:
                 match = match + 1
             index_testing = index_testing + 1
-            print('Processing {} out of {}'.format(index_testing, len(self.testing_labels)))
+            # print('Processing {} out of {}'.format(index_testing, len(self.testing_labels)))
             if mode == 'verbose':
-                print("Test")
-                print(label)
-                print('Pre-Classification')
-                print(pre_classification)
-                print('Real')
-                print(classification)
-                print('---------------')
-            if index_testing == 1000:
-                break
+                if classification is not None and int(label) != int(classification):
+                    print(index_testing)
+                    # print("Test")
+                    # print(label)
+                    # print('Real')
+                    # print(classification)
+                    # print('---------------')
+            # if index_testing == 1000:
+            #     break
         if mode == 'return':
             return str(np.divide(match, index_testing))
         if not preclassify:
